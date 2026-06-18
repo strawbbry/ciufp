@@ -30,7 +30,7 @@ dict = defaultdict(list) # default []
 
 # element in set : O(1)
 # faster than element in list : O(n) !
-set = set([1], 2) # unordered data 
+set = set([1], 2) # unordered UNIQUE data 
 set.add('3')
 set.remove(2)
 
@@ -41,3 +41,7 @@ indiv = str.split() # ["hi", "u"]
 str.replace(" ", "") = "hiu"
 
 
+# must wrap in list() ! 
+list(map(lambda x: x**2, lst)) # apply to each item 
+list(zip(lst, lst)) # (,) item tuple 
+list(filter(lambda x: x % 2 == 0, lst)) # true items only
