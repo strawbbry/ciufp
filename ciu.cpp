@@ -101,6 +101,111 @@ class Vector {
 
 #include <string>
 // singly linked list: track prev = curr via curr->next  
+class SinglyLinkedList {
+    protected:
+        struct node {
+            int data;
+            node *next;
+        };
+
+        node *head;
+
+    public:
+        SinglyLinkedList (int data = 0) {
+            head = new node {data, nullptr};
+        }
+
+        ~SinglyLinkedList () {
+            node *curr = head;
+            while (curr != nullptr) {
+                node *next = curr->next;
+                delete curr;
+                curr = next;
+            }
+            head = nullptr;
+        }
+
+        int size () const { // 'const' tells compiler fn is read-only, will not mutate anyt
+            int i = 0;
+
+            node *curr = head;
+            while (curr != nullptr) {
+                curr = curr->next;
+                i++;
+            }
+            return i;
+        }
+
+        bool empty () const {
+            return head == nullptr;
+        }
+
+        void push_front (int value) {
+            node *push = new node {value, nullptr};
+            if (head != nullptr) { push->next = head; }
+            head = push;
+        }
+
+        int pop_front () {
+            int val = head->data;
+            node *pop = head;
+            head = head->next;
+            delete pop;
+            return val;
+        }
+
+        void insert (int index, int value) {
+            node *in = new node {value, nullptr};
+            
+            if (index == 0) { 
+                in->next = head;
+                head = in;
+                return;
+            }
+
+            node *prev = nullptr;
+            node *curr = head;
+            for (int i = 0; i < index; i++) {
+                prev = curr;
+                curr = curr->next;
+            }
+            prev->next = in;
+            in->next = curr;
+            return;
+        }
+
+        void erase (int index) {
+            if (index == 0) {
+                pop_front();
+                return;
+            }
+
+            node *prev = nullptr;
+            node *curr = head;
+            for (int i = 0; i < index; i++) {
+                prev = curr;
+                curr = curr->next;
+            }
+            prev->next = curr->next;
+            delete curr; 
+            return;
+        }
+
+        void reverse () {
+            if (head == nullptr || head->next == nullptr) { return; }
+
+            node *prev = nullptr;
+            node *curr = head;
+            while (curr != nullptr) {
+                node *temp = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = temp;
+            }
+            head = prev; 
+        }
+};
+
 // doubly linked list: prev pointer 
 class LinkedList {
     protected:
