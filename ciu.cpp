@@ -617,3 +617,96 @@ class LinkedList_TailPointer : public LinkedList {
             return;
         }
 };  
+
+class Queue : LinkedList_TailPointer { // doubly linked list with tail pointer
+    public:
+        Queue (std::string data = "") {
+            LinkedList_TailPointer("");
+        };
+
+        ~Queue () {
+        // compiler auto calls ~LinkedList_TailPointer
+        }
+
+        void enqueue (std::string value) {
+            node *en = new node {value, nullptr, nullptr};
+            
+            if (head == nullptr) { 
+                head = en; 
+                tail = en;
+            }
+            else {
+                tail->next = en;
+                en->prev = tail;
+                tail = en;
+            }
+        }
+
+        std::string dequeue () {
+            if (head == nullptr) { return; }
+
+            std::string value = head->data;
+            node *temp = head;
+
+            head = head->next;
+            delete temp;
+
+            if (head == nullptr) { tail = nullptr; }
+            return value;
+        }
+
+        bool empty () {
+            return head == nullptr;
+        }
+};
+
+class CircularBuffer { // queue impl with array
+    private:
+        std::string *ptr;
+        int cap;
+        int sze; 
+
+        int head; // queue always has front and back
+        int tail;
+    
+    public:
+        CircularBuffer (int capacity) {
+            cap = capacity;
+            ptr = new std::string[cap];
+            sze = 0;
+            head = 0; // points to 'first in' element
+            tail = 0; 
+        }
+
+        ~CircularBuffer () {
+            delete[] ptr; 
+        }
+
+        void enqueue (std::string value) { // overwrite oldest data if full
+            ptr[tail] = value; // append to end 
+            tail = (tail + 1) % cap; // move forward (circle back to front for next overwrite)
+            if (sze == cap) {
+                head = (head + 1) % cap; // move head so that head != tail 
+            }  else { sze++; }
+        }
+
+        std::string dequeue () {
+            if (sze == 0) { return; } // nothing to return 
+
+            std::string value = ptr[head];
+            head = (head + 1) % cap; // move head forward 
+            sze--; // effectively 'removing' since this cannot be accessed anymore 
+
+            // if tail points to old head again it will just overwrite !
+
+            return value;
+        }
+
+        bool empty () {
+            return sze == 0;
+        }
+
+        bool full () {
+            return sze == cap;
+        }
+};

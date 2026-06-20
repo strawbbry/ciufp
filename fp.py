@@ -45,3 +45,14 @@ str.replace(" ", "") = "hiu"
 list(map(lambda x: x**2, lst)) # apply to each item 
 list(zip(lst, lst)) # (,) item tuple 
 list(filter(lambda x: x % 2 == 0, lst)) # true items only
+
+
+stack = [] # array O(1)
+stack.append(1) # push
+stack.pop() # pop
+
+
+from collections import deque # doubly linked list O(1)
+queue = deque()
+queue.append(1) # enqueue
+queue.popleft() # dequeue
