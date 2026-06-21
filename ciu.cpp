@@ -643,7 +643,7 @@ class Queue : LinkedList_TailPointer { // doubly linked list with tail pointer
         }
 
         std::string dequeue () {
-            if (head == nullptr) { return; }
+            if (head == nullptr) { return ""; } // not found
 
             std::string value = head->data;
             node *temp = head;
@@ -691,7 +691,7 @@ class CircularBuffer { // queue impl with array
         }
 
         std::string dequeue () {
-            if (sze == 0) { return; } // nothing to return 
+            if (sze == 0) { return ""; } // not found
 
             std::string value = ptr[head];
             head = (head + 1) % cap; // move head forward 
@@ -708,5 +708,117 @@ class CircularBuffer { // queue impl with array
 
         bool full () {
             return sze == cap;
+        }
+};
+
+class HashTable { // linear probing array impl
+    private:
+        struct entry {
+            int key;
+            int value;
+            bool occupy = false; // if item = true
+            bool tombstone = false; // item that got deleted 
+        };
+
+        entry *table; // pointer to entry #1 in array
+        int cap; 
+        int n; //# items 
+
+    public:
+        HashTable (int capacity) {
+            cap = capacity;
+            n = 0;
+            table = new entry[cap]; // array of entries of size cap
+            for (int i = 0; i < cap; i++) {
+                table[i].occupy = false;
+                table[i].tombstone = false; 
+            }
+        };
+
+        ~HashTable () {
+            delete[] table;
+        }
+
+        int hash (int k, int m) { // k = key, m = table size
+            return ((k % m) + m) % m; // account for -ve keys !
+        }
+
+        void add (int key, int value) {
+            float load = (float) n / cap;
+            if (load >= 0.75) { // resize 
+                int old_cap = cap;
+                entry *old_table = table;
+
+                cap *= 2;
+                table = new entry[cap];
+                for (int i = 0; i < cap; i++) {
+                    table[i].occupy = false;
+                    table[i].tombstone = false;
+                }
+                n = 0;
+
+                for (int i = 0; i < old_cap; i++) {
+                    if (old_table[i].occupy) {
+                        int j = hash(old_table[i].key, cap);
+                        while (table[j].occupy) { // probe for next empty
+                            j = (j + 1) % cap; // in case j + 1 > cap
+                        }
+                        table[j] = {old_table[i].key, old_table[i].value, true, false};
+                        n++;
+                    }
+                }
+                delete[] old_table;
+            }
+
+            int i = hash(key, cap);
+            int check = 0;
+            while (table[i].occupy && check < cap) { // iterate thru all keys using wraparound
+                if (table[i].key == key) {
+                    table[i].value = value;
+                    return;
+                }
+                i = (i + 1) % cap; 
+                check++;
+            }
+
+            table[i] = {key, value, true, false}; // if i not occupied
+            n++;
+        }
+
+        bool exists (int key) {
+            int i = hash(key, cap);
+            int check = 0;
+            while ((table[i].occupy || table[i].tombstone) && check < cap) { // continue if tombstone
+                if (table[i].occupy && table[i].key == key) { return true; } // check not tombstone 
+                i = (i + 1) % cap;
+                check++;
+            }
+            return false;
+        }
+
+        int get (int key) {
+            int i = hash(key, cap);
+            int check = 0;
+            while ((table[i].occupy || table[i].tombstone) && check < cap) { // continue if tombstone
+                if (table[i].occupy && table[i].key == key) { return table[i].value; } // check not tombstone 
+                i = (i + 1) % cap;
+                check++;
+            }
+            return -1; // not found 
+        }
+
+        void remove (int key) {
+            int i = hash(key, cap);
+            int check = 0;
+            while ((table[i].occupy || table[i].tombstone) && check < cap) { // continue if tombstone
+                if (table[i].occupy && table[i].key == key) { 
+                    table[i].occupy = false;
+                    table[i].tombstone = true;
+                    n--;
+                    return;
+                } // check not tombstone 
+                i = (i + 1) % cap;
+                check++;
+            }
         }
 };
