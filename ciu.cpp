@@ -101,7 +101,6 @@ class Vector {
 
 #include <string>
 // singly linked list: track prev = curr via curr->next  
-<<<<<<< HEAD
 class SinglyLinkedList {
     protected:
         struct node {
@@ -207,8 +206,6 @@ class SinglyLinkedList {
         }
 };
 
-=======
->>>>>>> 150eb58d16b7be0af4289f355b61627599d6abf4
 // doubly linked list: prev pointer 
 class LinkedList {
     protected:
@@ -619,7 +616,6 @@ class LinkedList_TailPointer : public LinkedList {
             }
             return;
         }
-<<<<<<< HEAD
 };  
 
 class Queue : LinkedList_TailPointer { // doubly linked list with tail pointer
@@ -714,6 +710,3 @@ class CircularBuffer { // queue impl with array
             return sze == cap;
         }
 };
-=======
-};  
->>>>>>> 150eb58d16b7be0af4289f355b61627599d6abf4
