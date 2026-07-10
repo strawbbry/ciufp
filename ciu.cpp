@@ -7,15 +7,17 @@ class Vector {
         int sze;
 
         void resize (int new_capacity) {
-            if (new_capacity / 4 == sze) { cap = cap / 2; } 
-            else { cap = cap * 2; }
-            int* new_ptr = new int[cap];
+            if (new_capacity < 1) { new_capacity = 1; } // base case cap = 0 }
 
-            for (int i = 0; i < sze; i++) {
-                *(new_ptr + i) = *(ptr + i);
-            }
+                int* new_ptr = new int[new_capacity];
 
-            ptr = new_ptr;
+                for (int i = 0; i < sze; i++) {
+                    new_ptr[i] = ptr[i];
+                }
+
+                delete[] ptr;
+                ptr = new_ptr;
+                cap = new_capacity;
         }
 
     public:
@@ -42,21 +44,26 @@ class Vector {
         }
 
         int at (int index) {
-            return *(ptr + index);
+            if (index < 0 || index >= sze) { return -1; }
+            return ptr[index];
         }
 
         void push (int item) {
-            if (sze + 1 == cap ) { resize(sze + 1); }
-            *(ptr + sze) = item;
+            if (sze == cap) { resize(cap == 0 ? 1 : cap * 2); }
+            ptr[sze] = item;
             sze++;
         }
 
         void insert (int index, int item) {
-            if (sze + 1 == cap ) { resize(sze + 1); }
+            if (index < 0 || index > sze) { return; } // index = sze allowed !
+
+            if (sze == cap) { resize(cap == 0 ? 1 : cap * 2); }
+
             for (int i = sze; i > index; i--) {
-                *(ptr + i) = at(i - 1);
+                ptr[i] = ptr[i - 1];
             }
-            *(ptr + index) = item;
+
+            ptr[index] = item;
             sze++;
         }
 
@@ -65,24 +72,30 @@ class Vector {
         }
 
         int pop () {
-            int tmp = at(sze - 1);
-            *(ptr + sze - 1) = {};
+            if (sze == 0) { return -1; }
+
+            int value = ptr[sze - 1];
             sze--;
-            if (sze - 1 == cap / 4) { resize(sze - 1); }
-            return tmp;
+
+            if (sze > 0 && sze <= cap / 4) { resize(cap/2); }
+
+            return value;
         }
 
         void del (int index) { // delete is a c++ keyword
-            *(ptr + index) = {};
-            for (int i = index; i < sze; i++) {
-                *(ptr + i) = at(i + 1);
+            if (index < 0 || index >= sze) { return; }
+
+            ptr[index] = {};
+            for (int i = index; i < sze - 1; i++) { // < sze would read past end
+                ptr[i] = ptr[i + 1];
             }
             sze--;
+            if (sze > 0 && sze <= cap / 4) { resize(cap / 2); }
         }
 
         void remove (int item) {
-            for (int i = 0; i < sze - 1; i++) {
-                if (at(i) == item) {
+            for (int i = 0; i < sze; i++) { // sze - 1 would never check last elem
+                if (ptr[i] == item) {
                     del(i);
                     i--;
                 }
@@ -111,8 +124,8 @@ class SinglyLinkedList {
         node *head;
 
     public:
-        SinglyLinkedList (int data = 0) {
-            head = new node {data, nullptr};
+        SinglyLinkedList () {
+            head = nullptr;
         }
 
         ~SinglyLinkedList () {
@@ -147,6 +160,7 @@ class SinglyLinkedList {
         }
 
         int pop_front () {
+            if (head == nullptr) { return -1; }
             int val = head->data;
             node *pop = head;
             head = head->next;
@@ -155,6 +169,8 @@ class SinglyLinkedList {
         }
 
         void insert (int index, int value) {
+            if (index < 0 || index > size()) { return; }
+
             node *in = new node {value, nullptr};
             
             if (index == 0) { 
@@ -175,6 +191,8 @@ class SinglyLinkedList {
         }
 
         void erase (int index) {
+            if (index < 0 || index >= size()) { return; }
+
             if (index == 0) {
                 pop_front();
                 return;
@@ -273,7 +291,7 @@ class LinkedList {
             return "";
         }
 
-        void push_front (std::string value) {
+        virtual void push_front (std::string value) {
             node *push = new node {value, nullptr, head};
             if (head != nullptr) {
                 head->prev = push;
@@ -281,7 +299,7 @@ class LinkedList {
             head = push;
         }
 
-        std::string pop_front () {
+        virtual std::string pop_front () {
             if (head == nullptr) { return ""; }
 
             std::string value = head->data;
@@ -332,6 +350,7 @@ class LinkedList {
         }
 
         std::string front () {
+            if (head == nullptr) { return ""; }
             return head->data;
         }
 
@@ -347,9 +366,7 @@ class LinkedList {
         }
 
         virtual void insert (int index, std::string value) {
-            if (size() < index + 1) { return; } // index too big
-
-            node *in = new node {value, nullptr, nullptr};
+            if (index < 0 || index > size()) { return; }
 
             if (index == 0) { // index at start
                 push_front(value);
@@ -360,24 +377,20 @@ class LinkedList {
                 return;
             }
             else { // index in middle 
+                node *in = new node {value, nullptr, nullptr};
                 int i = 0;
                 node *curr = head;
-                while (curr->next != nullptr) {
-                    if (i == index) {
-                        in->prev = curr->prev;
-                        curr->prev->next = in;
-                        in->next = curr;
-                        curr->prev = in; 
-                        return;
-                    }
-                    curr = curr->next;
-                    i++;
-                }
+                for (int i = 0; i < index; i++) { curr = curr->next; }
+                in->prev = curr->prev;
+                curr->prev->next = in;
+                in->next = curr;
+                curr->prev = in; 
+                return;
             }
         }
 
         virtual void erase (int index) {
-            if (size() < index + 1) { return; } // index too big
+            if (index < 0 || index >= size()) { return; } // index too big
             if (index == 0) { // index at start
                 std::string x = pop_front();
                 return;
@@ -476,6 +489,30 @@ class LinkedList_TailPointer : public LinkedList {
             return curr->data;
         }
 
+        void push_front (std::string value) override {
+            node *push = new node {value, nullptr, head};
+            if (head != nullptr) {
+                head->prev = push;
+            } else {
+                tail = push;
+            }
+            head = push;
+        }
+
+        std::string pop_front () override {
+            if (head == nullptr) { return ""; }
+            std::string value = head->data;
+            node *pop = head;
+            head = head->next;
+            if (head != nullptr) {
+                head->prev = nullptr;
+            } else {
+                tail = nullptr;
+            }
+            delete pop;
+            return value;
+        }
+
         void push_back (std::string value) override {
             node *push = new node {value, nullptr, nullptr};
             if (head == nullptr) { // 1. empty list
@@ -513,9 +550,7 @@ class LinkedList_TailPointer : public LinkedList {
         }
 
         void insert (int index, std::string value) override {
-            if (size() < index + 1) { return; } // index too big
-
-            node *in = new node {value, nullptr, nullptr};
+            if (index < 0 || index > size()) { return; } // index too small/big
 
             if (index == 0) { // index at start
                 push_front(value);
@@ -526,6 +561,7 @@ class LinkedList_TailPointer : public LinkedList {
                 return;
             }
             else {
+                node *in = new node {value, nullptr, nullptr};
                 node *curr;
                 if (index < size() / 2) { // index < midpoint
                     curr = head;
@@ -534,7 +570,7 @@ class LinkedList_TailPointer : public LinkedList {
                     }
                 } else { // index >= midpoint
                     curr = tail;
-                    for (int i = size(); i > index; i--) {
+                    for (int i = size() - 1; i > index; i--) {
                         curr = curr->prev;
                     }
                 }
@@ -546,12 +582,12 @@ class LinkedList_TailPointer : public LinkedList {
         }
 
         void erase (int index) override {
-            if (size() < index + 1) { return; } // index too big
+            if (index < 0 || index >= size()) { return; } // index too small/big
             if (index == 0) { // index at start
                 pop_front();
                 return;
             }
-            if (index == size()) { // index at end + 1
+            if (index == size() - 1) { // index at end 
                 pop_back();
                 return;
             }
@@ -618,11 +654,10 @@ class LinkedList_TailPointer : public LinkedList {
         }
 };  
 
-class Queue : LinkedList_TailPointer { // doubly linked list with tail pointer
+class Queue : public LinkedList_TailPointer { // doubly linked list with tail pointer (public keyword for public inheritance)
     public:
-        Queue (std::string data = "") {
-            LinkedList_TailPointer("");
-        };
+        Queue () : LinkedList_TailPointer() {}; // inherit constructor
+        
 
         ~Queue () {
         // compiler auto calls ~LinkedList_TailPointer
@@ -649,6 +684,7 @@ class Queue : LinkedList_TailPointer { // doubly linked list with tail pointer
             node *temp = head;
 
             head = head->next;
+            if (head != nullptr) { head->prev = nullptr; }
             delete temp;
 
             if (head == nullptr) { tail = nullptr; }
@@ -772,8 +808,8 @@ class HashTable { // linear probing array impl
 
             int i = hash(key, cap);
             int check = 0;
-            while (table[i].occupy && check < cap) { // iterate thru all keys using wraparound
-                if (table[i].key == key) {
+            while ((table[i].occupy || table[i].tombstone) && check < cap) { // iterate thru all keys using wraparound
+                if (table[i].occupy && table[i].key == key) {
                     table[i].value = value;
                     return;
                 }
