@@ -38,7 +38,7 @@ class Vector {
         }
 
         bool is_empty () {
-            return (size == 0) ? true : false; // c++ uses ternary
+            return (sze == 0) ? true : false; // c++ uses ternary
         }
 
         int at (int index) {

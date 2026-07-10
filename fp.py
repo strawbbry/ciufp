@@ -52,7 +52,21 @@ stack.append(1) # push
 stack.pop() # pop
 
 
-from collections import deque # doubly linked list O(1)
-queue = deque()
+from collections import deque # doubly linked list O(1) (otherwise list O(n))
+queue = deque() # double ended queue
 queue.append(1) # enqueue
 queue.popleft() # dequeue
+
+queue.appendleft('2') # append left 
+queue.append('2') # append right 
+queue.popleft() # pop left 
+queue.pop() # pop right
+
+
+import heapq 
+q = [2, 3]
+item = heapq.heappop(q) # delete min element 
+heap.heappush(q, 'ok')
+
+q = [-4]
+heapq.heappush(q, -2) # reverse heapq order (biggest first)
