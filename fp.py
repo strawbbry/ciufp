@@ -64,7 +64,7 @@ queue.popleft() # pop left
 queue.pop() # pop right
 
 
-import heapq 
+import heapq # heap = priority queue! (min by default, max by -1 * val)
 q = [2, 3]
 item = heapq.heappop(q) # delete min element 
 heapq.heappush(q, 'ok')
