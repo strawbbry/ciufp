@@ -66,7 +66,7 @@ queue.pop() # pop right
 import heapq 
 q = [2, 3]
 item = heapq.heappop(q) # delete min element 
-heap.heappush(q, 'ok')
+heapq.heappush(q, 'ok')
 
 q = [-4]
 heapq.heappush(q, -2) # reverse heapq order (biggest first)
