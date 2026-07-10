@@ -17,7 +17,8 @@ lst.sort(key=None, reverse=False)  # mutate array
 lst = [(1, 'a'), (2, 'b')]
 sorted_lst = sorted(lst, key=lambda x: x[0]) 
 lst.sort(key=lambda x: x[1]) 
-
+lst.sort(key=lambda x: x[1], reverse=True) # reverse order! put - in front of ints to reverse
+lst.sort(key=lambda x: (-x[0], x[1])) # sort by 2 params at once
 
 dict = {}
 dict['a'] = 1 # {'a' : 1}
