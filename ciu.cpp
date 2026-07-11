@@ -876,7 +876,6 @@ int binary_search (const std::vector<int>& array, int target) {
     return -1;
 }
 
-// binary search using recursion
 int recursive_binary_search (const std::vector<int>&array, int target, int left, int right) {
     if (left > right) { return -1; } // base case 
 
@@ -887,3 +886,199 @@ int recursive_binary_search (const std::vector<int>&array, int target, int left,
     else { return recursive_binary_search(array, target, left, mid - 1); }
 }
 
+#include <iostream>
+#include <stack>
+class BST {
+    private:
+        struct node {
+            int data;
+            node *left;
+            node *right;
+
+            ~node () { // node destructor method inside struct : when root deleted ...
+            delete left;
+            delete right;
+            }
+        };
+
+        node *root;
+
+    public:
+        BST () {
+            root = nullptr; 
+        };
+
+        ~BST () {
+            delete root; // auto calls root node destructor 
+        }
+
+        void insert (int value) { // insert value into tree
+            if (root == nullptr) {
+                root = new node {value, nullptr, nullptr};
+                return;
+            }
+
+            node *curr = root;
+            while (true) {
+                if (value < curr->data) {
+                    if (curr->left == nullptr) { 
+                        curr->left = new node {value, nullptr, nullptr};
+                        return;
+                    } 
+                    curr = curr->left;
+                }
+                else if (value > curr->data) {
+                    if (curr->right == nullptr) {
+                        curr->right = new node { value, nullptr, nullptr};
+                        return;
+                    }
+                    curr = curr->right;
+                }
+                else { return; } // ignore duplicates 
+            }
+        }
+
+        int get_node_count (node *subroot) { // get count of values stored in subtree
+            if (subroot == nullptr) { return 0; }
+            return get_node_count(subroot->left)+ get_node_count(subroot->right) + 1;
+        }
+
+        void print_values () { // prints the values in the tree, from min to max
+            std::stack<node*> s; // stack to return to previous roots
+
+            node *curr = root;
+            while (curr != nullptr || !s.empty()) {
+                while (curr != nullptr) {
+                    s.push(curr); // remember root for later 
+                    curr = curr->left;
+                }
+                curr = s.top(); // left finished, return to closest root
+                s.pop(); // remove from 'later' stack
+
+                std::cout << curr->data << "\n";
+                curr = curr->right;  // check right subtree 
+            }
+        }
+
+        bool is_in_tree (int value) { // returns true if a given value exists in the tree
+            if (root == nullptr) { return false; }
+
+            node *curr = root;
+            while (curr != nullptr) {
+                if (value == curr->data) { return true; }
+                else if (value < curr->data) { curr = curr->left; }
+                else { curr = curr->right; }
+            }
+            return false;
+        }
+
+        int get_height (node *subroot) { //  get_height // returns the height in nodes (single node's height is 1)
+            if (subroot == nullptr) { return 0; }
+            return std::max(get_height(subroot->left), get_height(subroot->right)) + 1;
+        }
+
+        int get_min () { // returns the minimum value stored in the tree
+            if (root == nullptr) { return; }
+
+            node *curr = root;
+            while (curr->left != nullptr) { curr = curr->left; }
+            return curr->data;
+        }
+
+        int get_max () { // returns the maximum value stored in the tree
+            if (root == nullptr) { return; }
+
+            node *curr = root;
+            while (curr->right != nullptr) { curr = curr->right; }
+            return curr->data;
+        }
+
+        node* get_min_node (node *subroot) { // returns the minimum node stored in the tree
+            if (subroot == nullptr) { return nullptr; }
+
+            while (subroot->left != nullptr) { subroot = subroot->left; }
+            return subroot;
+        }
+
+        node* get_max_node (node *subroot) { // returns the maximum node stored in the tree
+            if (subroot == nullptr) { return nullptr; }
+
+            while (subroot->right != nullptr) { subroot = subroot->right; }
+            return subroot;
+        }
+
+        bool is_binary_search_tree () {
+            std::stack<node*> s;
+            node *curr = root;
+            node *prev = root;
+
+            while (curr != nullptr || !s.empty()) {
+                while (curr != nullptr) {
+                    if (curr->data < prev->data) { return false; }
+
+                    s.push(curr);
+                    prev = curr;
+                    curr = curr->left;
+                }
+                curr = s.top();
+                prev = curr;
+                s.pop();
+
+                prev = curr;
+                curr = curr->right;
+            }
+            return true;
+        }
+
+        node* delete_value (node *subroot, int value) {
+            if (subroot == nullptr) { return nullptr; }
+
+            else if (value < subroot->data) { subroot->left = delete_value(subroot->left, value); }
+            else if (value > subroot->data) { subroot->right = delete_value(subroot->right, value); }
+            else {
+                if (subroot->left == nullptr && subroot->right == nullptr) {
+                    delete subroot;
+                    return nullptr;
+                }
+                else if (subroot->left == nullptr) {
+                    node *temp = subroot;
+                    subroot = subroot->right;
+                    temp->right = nullptr;
+                    delete temp;
+                }
+                else if (subroot->right == nullptr) {
+                    node *temp = subroot;
+                    subroot = subroot->left;
+                    temp->left = nullptr;
+                    delete temp;
+                }
+                else {
+                    node *temp = get_min_node(subroot->right);
+                    subroot->data = temp->data;
+                    subroot->right = delete_value(subroot->right, temp->data);
+                }
+            }
+            return subroot;
+        }
+
+        int get_successor (int value) { // returns the next-highest value in the tree after given value, -1 if none
+            std::stack<node*> s;
+            bool found = false;
+
+            node *curr = root;
+            while (curr != nullptr || !s.empty()) {
+                while (curr != nullptr) {
+                    s.push(curr);
+                    curr = curr->left;
+                }
+                curr = s.top();
+                s.pop();
+
+                if (found) { return curr->data; }
+
+                if (curr->data == value) { found = true; }
+                curr = curr->right;
+            }
+            return -1;
+        }
+};
