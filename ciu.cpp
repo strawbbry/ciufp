@@ -858,3 +858,32 @@ class HashTable { // linear probing array impl
             }
         }
 };
+
+int binary_search (const std::vector<int>& array, int target) {
+    int left = 0;
+    int right = static_cast<int>(array.size()) - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2; // '/' rounds down
+        // left + right could overflow and wraparound if both are large 
+        // right - left avoids that 
+
+        if (array[mid] == target) { return mid; }
+        else if (array[mid] < target) { left = mid + 1; }
+        else { right = mid - 1; }
+    }
+
+    return -1;
+}
+
+// binary search using recursion
+int recursive_binary_search (const std::vector<int>&array, int target, int left, int right) {
+    if (left > right) { return -1; } // base case 
+
+    int mid = left + (right - left) / 2;
+
+    if (array[mid] == target) { return mid; }
+    else if (array[mid] < target) { return recursive_binary_search(array, target, mid + 1, right); }
+    else { return recursive_binary_search(array, target, left, mid - 1); }
+}
+
