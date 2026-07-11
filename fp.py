@@ -28,19 +28,16 @@ from collections import defaultdict
 dict = defaultdict(int) # default 0
 dict = defaultdict(list) # default []
 
-
 # element in set : O(1)
 # faster than element in list : O(n) !
 set = set([1], 2) # unordered UNIQUE data 
 set.add('3')
 set.remove(2)
 
-
 str = "hi u"
 indiv = str.split() # ["hi", "u"] 
 " ".join(indiv) = "hi u" # join with " "
 str.replace(" ", "") = "hiu"
-
 
 # must wrap in list() ! 
 list(map(lambda x: x**2, lst)) # apply to each item 
@@ -48,10 +45,11 @@ list(zip(lst, lst)) # (,) item tuple
 list(filter(lambda x: x % 2 == 0, lst)) # true items only
 
 
+# stacks & queues
+
 stack = [] # array O(1)
 stack.append(1) # push
 stack.pop() # pop
-
 
 from collections import deque # doubly linked list O(1) (otherwise list O(n))
 queue = deque() # double ended queue
@@ -63,7 +61,6 @@ queue.append('2') # append right
 queue.popleft() # pop left 
 queue.pop() # pop right
 
-
 import heapq # heap = priority queue! (min by default, max by -1 * val)
 q = [2, 3]
 item = heapq.heappop(q) # delete min element 
@@ -71,7 +68,6 @@ heapq.heappush(q, 'ok')
 
 q = [-4]
 heapq.heappush(q, -2) # reverse heapq order (biggest first)
-
 
 from collections import Counter
 count = [2, 3, 4, 2]
