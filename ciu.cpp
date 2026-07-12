@@ -912,7 +912,7 @@ class BST {
             delete root; // auto calls root node destructor 
         }
 
-        void insert (int value) { // insert value into tree
+        virtual void insert (int value) { // insert value into tree
             if (root == nullptr) {
                 root = new node {value, nullptr, nullptr};
                 return;
@@ -985,7 +985,7 @@ class BST {
             return curr->data;
         }
 
-        int get_max () { // returns the maximum value stored in the tree
+        virtual int get_max () { // returns the maximum value stored in the tree
             if (root == nullptr) { return; }
 
             node *curr = root;
@@ -1080,5 +1080,109 @@ class BST {
                 curr = curr->right;
             }
             return -1;
+        }
+};
+
+#include <vector>
+class MaxHeap { // almost complete binary tree 
+    private:
+        std::vector<int> heap; // modern c++ array, auto-create constructor, destructor
+
+    public:
+        MaxHeap () {
+            heap.push_back(0); // make 1 be first real index
+        };
+
+        void insert (int value) {
+            heap.push_back(value); // add value to end of heap
+            sift_up(heap.size() - 1); // shift value at end of heap
+        }
+
+        void sift_up (int index) { // needed for insert to shift value at given index
+            if (index == 1) { return; } // root
+
+            int parent = index / 2;
+            if (heap[index] > heap[parent]) {
+                int temp = heap[parent]; 
+                heap[parent] = heap[index];
+                heap[index] = temp;
+                sift_up(parent);
+            } 
+        }
+
+        int get_max () { // returns the max item, without removing it
+            return heap[1];
+        }
+
+        int get_size () { // return number of elements stored
+            return heap.size() - 1;
+        }
+
+        bool is_empty () { // returns true if the heap contains no elements
+            return heap.size() == 1;
+        }
+
+        int extract_max () { // returns the max item, removing it
+            if (heap.size() == 1) { return -1; } // empty heap
+            int max = heap[1];
+            
+            int temp = heap[1]; // swap root and last element
+            heap[1] = heap[heap.size() - 1];
+            heap[heap.size() - 1] = temp;
+
+            heap.pop_back();
+            sift_down(1); 
+
+            return max;
+        }
+
+        void sift_down (int index) { // needed for extract_max to shift value at given index
+            if (index >= heap.size()) { return; } 
+
+            int left = 2 * index;
+            int right = 2 * index + 1;
+            int largest = index;
+            if (left < heap.size() && heap[left] > heap[index]) { largest = left; }
+            if (right < heap.size() && heap[right] > heap[largest]) { largest = right; }
+
+            if (largest != index) {
+                int temp = heap[index];
+                heap[index] = heap[largest];
+                heap[largest] = temp;
+                sift_down(largest);
+            }
+        }
+
+        void remove (int x) { // removes item at index x
+            if (x < 1 || x >= heap.size()) { return; }
+
+            int temp = heap[x];
+            heap[x] = heap[heap.size() - 1];
+            heap[heap.size() - 1] = temp;
+
+            heap.pop_back();
+            sift_up(x);
+            sift_down(x);
+        }
+
+        void heapify (int *array, int size) { // create a heap from an array of elements, needed for heap_sort
+            heap.clear();
+            heap.push_back(0); // new heap
+            for (int i = 0; i < size; i++) {
+                heap.push_back(array[i]);
+            }
+
+            for (int i = heap.size() / 2; i > 0; i--) {
+                sift_down(i);
+            }
+        }
+
+        int* heap_sort (int *array, int size) { // take an unsorted array and turn it into a sorted array in place using a max heap or min heap
+            heapify(array, size);
+
+            
+            for (int i = size - 1; i >= 0; i--) {
+                array[i] = extract_max(); // sort in ascending order 
+            }
         }
 };
