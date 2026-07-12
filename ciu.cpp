@@ -1186,3 +1186,117 @@ class MaxHeap { // almost complete binary tree
             }
         }
 };
+
+void merge (int *array, int low, int mid, int high) { // needed for mergesort
+    // physically split into 2 subarrays
+    int left_size = mid - low + 1; // include mid
+    int right_size = high - mid; // don't include mid
+    int* left = new int[left_size];
+    int* right = new int[right_size];
+    for (int i = 0; i < left_size; i++) { left[i] = array[low + i]; }
+    for (int i = 0; i < right_size; i++) { right[i] = array[mid + 1 + i]; }
+
+    int i = 0; // left (subarray)
+    int j = 0; // right (subarray)
+    int k = low; // array
+
+    while (i < left_size && j < right_size) {
+        if (left[i] <= right[j]) {
+            array[k] = left[i]; // append to array to be returned 
+            i++; // move left (subarray) pointer
+        } else {
+            array[k] = right[j];
+            j++; // move right (subarray) pointer
+        }
+        k++;
+    }
+    
+    // either left or right = empty
+    while (i < left_size) { // append remaining to array to be returned 
+        array[k] = left[i];
+        i++;
+        k++;
+    }
+    while (j < right_size) { 
+        array[k] = right[j];
+        j++;
+        k++;
+    }
+
+    delete[] left; // delete temp arrays!
+    delete[] right;
+}
+
+// recursive (pass in low/high)! 
+int* mergesort (int *array, int low, int high) { // O(nlogn) worst/avg
+    if (low < high) { // 0 or 1 elements = nothing to do
+        int mid = low + (high - low) / 2;
+        // feed in values for split into 2 subarrays
+        mergesort(array, low, mid);
+        mergesort(array, mid + 1, high);
+        merge(array, low, mid, high); // sort each subarray
+    }
+    return array;
+}
+
+int partition (int* array, int low, int high) { // needed for quicksort 
+    // median of three partitioning 
+    int mid = low + (high - low) / 2;
+    if (array[mid] < array[low])  { std::swap(array[mid], array[low]); }
+    if (array[high] < array[low]) { std::swap(array[high], array[low]); }
+    if (array[high] < array[mid]) { std::swap(array[high], array[mid]); } 
+
+    // move pivot to end
+    std::swap(array[mid], array[high]); 
+    int pivot = array[high]; // save pivot value
+
+    int i = low - 1; // pointer for elements <= pivot (start low - 1 since nothing confirmed yet)
+    for (int j = low; j < high; j++) { // nothing actl changes until there is one where array[j] > pivot, then finally i != j
+        if (array[j] <= pivot) {
+            i++;
+            std::swap(array[i], array[j]); // swap confirmed smaller elements to front
+        }
+    }
+    std::swap(array[i + 1], array[high]); // swap pivot back to mid
+    return i + 1; // return index of pivot
+}
+
+// recursive (pass in low/high)! 
+int* quicksort (int* array, int low, int high) { // O(nlogn) avg = good pivot
+    if (low < high) { // 0 or 1 elements = nothing to do
+        int pivot = partition(array, low, high); // sort pivot into correct position
+        quicksort(array, low, pivot - 1);
+        quicksort(array, pivot + 1, high);
+    }
+    return array;
+}
+
+int* selectionsort (int* array, int size) { // O(n^2) worst/avg
+    for (int i = 0; i < size - 1; i++) {
+        int min = i;
+
+        for (int j = i + 1; j < size; j++) { // find smallest in unsorted partition
+            if (array[j] < array[min]) { min = j; }
+        }
+
+        if (min != i) { // swap smallest into position
+            int temp = array[i];
+            array[i] = array[min];
+            array[min] = temp;
+        }
+    }
+    return array;
+}
+
+int* insertionsort (int* array, int size) { // O(n^2) worst/avg
+    for (int i = 0; i < size; i++) {
+        int j = i;
+        while (j > 0 && (array[j - 1] > array[j])) { // compare each item to items on its left and swap into position going left 
+            int temp = array[j];
+            array[j] = array[j - 1];
+            array[j - 1] = temp;
+            j--;
+        }
+    }
+    return array;
+}
