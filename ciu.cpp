@@ -1300,3 +1300,201 @@ int* insertionsort (int* array, int size) { // O(n^2) worst/avg
     }
     return array;
 }
+
+vector<vector<int>> list; // array of lists: list[u] = neighbours of u 
+vector<bool> visited;
+void recursive_adj_list_dfs (int start) {  // O(V + E) : visit all V and E once 
+    visited[start] = true; 
+
+    // enhanced for loop in c++
+    for (int v : list[start]) { // iterate thru neighbours of u
+        if (!visited[v]) { recursive_adj_list_dfs(v); } // call only returns when everyt reachable from it has been explored
+    }
+}
+
+void iterative_adj_list_dfs (int start, int n) { // O(V + E) : visit all V and E once
+    vector<bool> visited(n, false); // array of size n with all init to false 
+    stack<int> stack;
+    stack.push(start);
+    visited[start] = true; 
+
+    while (!stack.empty()) {
+        int u = stack.top();
+        stack.pop();
+    
+
+        // auto keyword detects variable type !
+        // rbegin (begin of reverse), rend (end of reverse): reverse list
+        // ++i = return value after incr., i++ = return value before incr.
+        for (auto i = list[u].rbegin(); i != list[u].rend(); ++i) { // reverse order and push rightmost in to stack first for backtrack! auto/rend etc. because list[u] = vector<int>
+            int v = *i;
+
+            if (!visited[v]) {
+                visited[v] = true; 
+                stack.push(v);
+            }
+        }
+    }
+}
+
+vector<vector<int>> matrix; // 2d array: matrix[u][v] = 1 if edge exist
+void recursive_adj_matrix_dfs (int u, int n) { // O(V^2) : matrix 
+    visited[u] = true;
+
+    for (int v = 0; v < n; v++) { // O(V) : scan entire row for neighbours 
+        if (matrix[u][v] && !visited[v]) { recursive_adj_matrix_dfs(v, n); }
+    }  
+}
+
+void iterative_adj_matrix_dfs (int start, int n) { // O(V^2) : matrix
+    vector<bool> visited(n, false); // array of size n with all init to false 
+    stack<int> stack;
+    stack.push(start);
+    visited[start] = true;
+
+    while (!stack.empty()) {
+        int u = stack.top();
+        stack.pop();
+
+        for (int v = n - 1; v >= 0; v--) { // reverse order and push rightmost in to stack first for backtrack! count down instead of up because scan across row 
+            if (matrix[u][v] && !visited[v]) {
+                visited[v] = true;
+                stack.push(v);
+            }
+        }
+    }
+}
+
+#include <queue>
+void adj_list_bfs (int start, int n) { // O(V + E) 
+    vector<bool> visited(n, false);
+    queue<int> queue; 
+    queue.push(start);
+    visited[start] = true;
+
+    while (!queue.empty()) {
+        int u = queue.front();
+        queue.pop(); // removes next elem in queue
+
+        for (int v : list[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                queue.push(v);
+            }
+        }
+    }
+}
+
+void adj_matrix_bfs (int start, int n) { // O(V^2)
+    vector<bool> visited(n, false);
+    queue<int> queue;
+    queue.push(start);
+    visited[start] = true; 
+
+    while (!queue.empty()) {
+        int u = queue.front();
+        queue.pop();
+
+        for (int v = 0; v < n; v++) {
+            if (matrix[u][v] && !visited[v]) {
+                visited[v] = true;
+                queue.push(v);
+            }
+        }
+    }
+}
+
+vector<int> dijkstra (int start, int n, vector<vector<pair<int,int>>>& list) { // adj list of (neighbour, weight) pairs for weighted graph O(E + VlogV)
+    vector<int> dist(n, INT_MAX); // INT_MAX macro from limits.h = inf
+    dist[start] = 0;
+
+    //             elem type      underlying (alw array) comparator 
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> priorityqueue; // default comparator = less for maxheap. therefore use greater for minheap.
+    priorityqueue.push({0, start});
+
+    while (!priorityqueue.empty()) { // priorityqueue cannot update existing entry! instead, push new entry to update 
+        auto [d, u] = priorityqueue.top();
+        priorityqueue.pop();
+
+        if (d > dist[u]) { continue; } // only process u once with its best distance! don't pay attention to bigger, stale duplicates
+
+        for (auto [v, weight] : list[u]) {
+            if (dist[v] > dist[u] + weight) {
+                dist[v] = dist[u] + weight;
+                priorityqueue.push({dist[v], v}); // push to end (bugger, stale duplicates at front, get popped and compared first)
+            }
+        }
+    }
+
+    return dist;
+}
+
+int prim_minimum_spanning_tree (int n, vector<vector<pair<int,int>>>& list) { // minimum spanning tree 
+    vector<int> edge(n, INT_MAX); // cheapest edge so far to connect each node to tree
+    vector<bool> in_tree(n, false); // tracks whether node in tree
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> priorityqueue;
+    int total = 0;
+
+    edge[0] = 0; // arbitrary start node
+    priorityqueue.push({0, 0});
+
+    while (!priorityqueue.empty()) {
+        auto [w, u] = priorityqueue.top();
+        priorityqueue.pop();
+
+        if (in_tree[u]) { continue; } // ignore nodes already in tree even if cheapest edge 
+
+        in_tree[u] = true; // mark visited
+        total += w;
+
+        for (auto [v, weight] : list[u]) {
+            if (!in_tree[v] && weight < edge[v]) {
+                edge[v] = weight;
+                priorityqueue.push({edge[v], v});
+            }
+        }
+    }
+
+    return total;
+}
+
+enum State {UNVISITED, PROGRESS, FINISHED}; // mark exploration of specific paths to check for cycles
+vector<State> state;
+bool cycle_check_dfs (int u) { // needed before topological sort 
+    state[u] = PROGRESS;  
+
+    for (int v : list[u]) {
+        if (state[v] == PROGRESS) { return true; } // neighbour has been visited prev but now we see it again = cycle !
+        if (state[v] == UNVISITED && cycle_check_dfs(v)) { return true; } // recurse, return true to propagate upward if condition true = cycle found 
+    }
+
+    state[u] = FINISHED;
+    return false;
+}
+
+stack<int> result;
+void topological_dfs (int u) { // dfs = basis ! make sure no cycles via cycle_check before
+    state[u] = PROGRESS;
+
+    for (int v : list[u]) {
+        if (state[v] == UNVISITED) { topological_dfs(v); }
+    }
+
+    state[u] = FINISHED;
+    result.push(u); // record finish order as path explored
+}
+vector<int> topologicalsort (int n) { // cover all nodes' paths in graph 
+    state.assign(n, UNVISITED); // resize array to n, reset all to UNVISITED
+    
+    for (int i = 0; i < n; i++) {
+        if (state[i] == UNVISITED) { topological_dfs(i); }
+    }
+
+    vector<int> order;
+    while (!result.empty()) { // reverse stack and output as array
+        order.push_back(result.top());
+        result.pop();
+    }
+
+    return order;
+}
