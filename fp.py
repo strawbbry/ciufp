@@ -72,3 +72,34 @@ heapq.heappush(q, -2) # reverse heapq order (biggest first)
 from collections import Counter
 count = [2, 3, 4, 2]
 tally = Counter(count) # = {2 : 2, 3 : 1, 4 : 1} dictionary that counts occurrences
+
+
+# trees & graphs 
+
+def bfs(graph, root):
+    queue = deque()
+    visited = set()
+    
+    queue.append(root)
+    visited.add(root)
+    
+    while queue:
+        node = queue.popleft()
+        for neighbour in graph[node]:
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.append(neighbour)
+            
+def dfs(graph, root):
+    stack = [] # for backtrack via lifo
+    visited = set()
+    
+    stack.append(root)
+    visited.add(root)
+    
+    while stack:
+        node = stack.pop()
+        for neighbour in graph[node]:
+            if neighbour not in visited:
+                visited.add(neighbour)
+                stack.append(neighbour)
