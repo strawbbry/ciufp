@@ -112,6 +112,9 @@ class Vector {
         }
 };
 
+
+// linked lists
+
 #include <string>
 // singly linked list: track prev = curr via curr->next  
 class SinglyLinkedList {
@@ -654,6 +657,9 @@ class LinkedList_TailPointer : public LinkedList {
         }
 };  
 
+
+// stacks & queues
+
 class Queue : public LinkedList_TailPointer { // doubly linked list with tail pointer (public keyword for public inheritance)
     public:
         Queue () : LinkedList_TailPointer() {}; // inherit constructor
@@ -746,6 +752,9 @@ class CircularBuffer { // queue impl with array
             return sze == cap;
         }
 };
+
+
+// hashtables
 
 class HashTable { // linear probing array impl
     private:
@@ -859,6 +868,9 @@ class HashTable { // linear probing array impl
         }
 };
 
+
+// binary search
+
 int binary_search (const std::vector<int>& array, int target) {
     int left = 0;
     int right = static_cast<int>(array.size()) - 1;
@@ -885,6 +897,9 @@ int recursive_binary_search (const std::vector<int>&array, int target, int left,
     else if (array[mid] < target) { return recursive_binary_search(array, target, mid + 1, right); }
     else { return recursive_binary_search(array, target, left, mid - 1); }
 }
+
+
+// trees 
 
 #include <iostream>
 #include <stack>
@@ -1083,6 +1098,9 @@ class BST {
         }
 };
 
+
+// heaps 
+
 #include <vector>
 class MaxHeap { // almost complete binary tree 
     private:
@@ -1186,6 +1204,9 @@ class MaxHeap { // almost complete binary tree
             }
         }
 };
+
+
+// sorting
 
 void merge (int *array, int low, int mid, int high) { // needed for mergesort
     // physically split into 2 subarrays
@@ -1300,6 +1321,9 @@ int* insertionsort (int* array, int size) { // O(n^2) worst/avg
     }
     return array;
 }
+
+
+// graphs 
 
 vector<vector<int>> list; // array of lists: list[u] = neighbours of u 
 vector<bool> visited;
@@ -1497,4 +1521,23 @@ vector<int> topologicalsort (int n) { // cover all nodes' paths in graph
     }
 
     return order;
+}
+
+
+// recursion 
+
+int factorial (int n) {
+    if (n <= 1) { return 1; } // base case (stops recursion)
+    return n * factorial(n - 1); // recursive subproblem
+}
+
+int fib (int n) { // unmemoized : inefficient 
+    if (n <= 1) { return n; }
+    return fib(n - 1) + fib(n - 2); // 2x recursive subcalls ! 
+}
+
+int fib_memoized (int n, vector<int>& memo) { // memoization : cache solved subproblems
+    if (n <= 1) { return n; }
+    if (memo[n] != -1) { return memo[n]; } // cached  
+    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo); // solve & cache
 }
