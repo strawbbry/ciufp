@@ -1541,3 +1541,27 @@ int fib_memoized (int n, vector<int>& memo) { // memoization : cache solved subp
     if (memo[n] != -1) { return memo[n]; } // cached  
     return memo[n] = fib(n - 1, memo) + fib(n - 2, memo); // solve & cache
 }
+
+
+// dynamic programming 
+
+int fib_dp (int n, vector<int>& dp) { // dp = [0] * (n + 1)
+    if (n < 2) { return n; }
+
+    dp[1] = 1; // dp iterative table 
+    for (int i = 2; i < n + 1; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2];
+    }
+
+    return dp[n];
+}
+
+int fib_dp_optimised (int n) { // collapsed dp table to sliding window
+    int a = 0;
+    int b = 0;
+    for (int i = 0; i < n; i++) {
+        a = b;
+        b = a + b;
+    }
+    return a;
+}
