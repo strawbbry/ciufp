@@ -103,3 +103,25 @@ def dfs(graph, root):
             if neighbour not in visited:
                 visited.add(neighbour)
                 stack.append(neighbour)
+                
+                
+# dynamic programming 
+
+def knapsack(total_weight, items): # 0/1 
+    total_items = len(items)
+    
+    # 2d list:
+    # [0] * (total_weight + 1) : create row of 0s
+    # for _ in range(total_items + 1) : create row of 0s for each = cols
+    dp = [[0] * (total_weight + 1) for _ in range(total_items + 1)]
+    
+    for i in range(total_items):
+        for j in range(1, total_weight + 1):
+            weight, value = items[i]
+            
+            dp[i + 1][j] = max(dp[i + 1][j - 1], dp[i][j])
+            
+            if j - weight >= 0:
+                dp[i + 1][j] = max(dp[i + 1][j], dp[i][j - weight] + value)
+                
+    return dp[total_items][total_weight]
