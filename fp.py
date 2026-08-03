@@ -107,6 +107,8 @@ def dfs(graph, root):
                 
 # dynamic programming 
 
+prac = [*[f"a{i}" for i in range(8)], 2] # * unpacks into [a0, ... a7, 2]
+
 def knapsack(total_weight, items): # 0/1 
     total_items = len(items)
     
