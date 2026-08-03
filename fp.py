@@ -107,7 +107,15 @@ def dfs(graph, root):
                 
 # dynamic programming 
 
-prac = [*[f"a{i}" for i in range(8)], 2] # * unpacks into [a0, ... a7, 2]
+prac1 = [
+    *[f"a{i}" for i in range(8)], # * unpacks one into [a0, ... a7, 2]
+    2
+] 
+
+prac2 = {
+    **{"x": 0}, # ** unpack for combining multiple 
+    **{f"a{i}": f"a{p}" for i, p in zip(range(3), [1, 2, 3])}, # zip maps [0, 1, 2] with [1, 2, 3] 
+}
 
 def knapsack(total_weight, items): # 0/1 
     total_items = len(items)
