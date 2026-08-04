@@ -135,3 +135,30 @@ def knapsack(total_weight, items): # 0/1
                 dp[i + 1][j] = max(dp[i + 1][j], dp[i][j - weight] + value)
                 
     return dp[total_items][total_weight]
+
+
+# union find 
+
+representative = {'a': 'a', 'b': 'b'} # same representative = same set 
+
+def find(a): # representative find (by path compression)
+    if (a == representative[a]):
+        return a 
+    else:
+        representative[a] = find(representative[a])
+        return representative[a]
+
+size = [1, 1] 
+def combine(a, b): # disjoint set union (by size)
+    a = find(a) 
+    b = find(b)
+    
+    if (a == b):
+        return
+    else:
+        if (size[a] > size[b]):
+            representative[b] = a
+            size[a] += size[b]
+        else:
+            representative[a] = b
+            size[v] += size[u]
