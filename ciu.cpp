@@ -1507,6 +1507,7 @@ void topological_dfs (int u) { // dfs = basis ! make sure no cycles via cycle_ch
     state[u] = FINISHED;
     result.push(u); // record finish order as path explored
 }
+
 vector<int> topologicalsort (int n) { // cover all nodes' paths in graph 
     state.assign(n, UNVISITED); // resize array to n, reset all to UNVISITED
     
