@@ -421,12 +421,12 @@ class LinkedList {
         virtual void reverse () {
             if (head == nullptr || head->next == nullptr) { return; }
             node *curr = head;
-            node *temp = nullptr;
+            node *last = nullptr; // prev, head 2 pointers pattern
             while (curr != nullptr) {
-                temp = curr->prev;
+                node *temp = curr->prev;
                 curr->prev = curr->next;
                 curr->next = temp;
-
+                last = curr; 
                 curr = curr->prev; // move forward 
             }
             head = temp->prev;
@@ -1540,7 +1540,7 @@ int fib (int n) { // unmemoized : inefficient
 int fib_memoized (int n, vector<int>& memo) { // memoization : cache solved subproblems
     if (n <= 1) { return n; }
     if (memo[n] != -1) { return memo[n]; } // cached  
-    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo); // solve & cache
+    return memo[n] = fib_memoized(n - 1, memo) + fib_memoized(n - 2, memo); // solve & cache
 }
 
 
@@ -1559,10 +1559,11 @@ int fib_dp (int n, vector<int>& dp) { // dp = [0] * (n + 1)
 
 int fib_dp_optimised (int n) { // collapsed dp table to sliding window
     int a = 0;
-    int b = 0;
+    int b = 1;
     for (int i = 0; i < n; i++) {
+        int next = a + b;
         a = b;
-        b = a + b;
+        b = next;
     }
     return a;
 }
