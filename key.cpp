@@ -138,3 +138,38 @@ void merge (int *array, int low, int mid, int high) {
         k++;
     }
 }
+
+int* mergesort (int *array, int low, int high) {
+    if (low < high) {
+        // recursion on left, right 
+        merge(array, low, mid, high);
+    }
+}
+
+
+// quicksort
+
+int partition (int *array, int low, int high) {
+    int pivot = array[mid;]
+    std::swap(array[mid], array[high]);       // pivot to end 
+
+    int i = low - 1;   
+    
+    for (int j = low; j < high; j++) {
+        if (array[j] <= pivot) {
+            i++;
+            std::swap(array[i], array[j]);    // real swap if i != j
+        }
+    }
+
+    std::swap(array[i + 1], array[high]);     // pivot to pos 
+
+    return i + 1;                             // pivot index 
+}
+
+int* quicksort (int *array, int low, int high) {
+    if (low < high) {
+        int pivot = partition(array, low, high);
+        // recursion on pivot left, pivot right 
+    }
+}
