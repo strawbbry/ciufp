@@ -44,3 +44,61 @@ while (table[i].occupy || table[i].tombstone) {
     if (table[i].occupy && table[i].key == key) { return; }
     else { i = (i + 1) % cap; }
 }
+
+
+// dfs
+
+vector<vector<int>> list;    // list of lists 
+vector<vector<int>> matrix;  // 2d matrix 
+
+vector<bool> visited; 
+
+void dfs (int root) {
+    visited[root] = true;
+
+    // adj. list 
+    for (int neighbour : list[root]) {                                           
+        if (!visited[neighbour]) { dfs(neighbour); }
+    }
+
+    // adj. matrix 
+    for (int neighbour = 0; neighbour < len(matrix); neighbour++) {
+        if (matrix[root][neighbour] && !visited[neighbour]) { dfs(neighbour); }
+    }
+}
+
+
+// bfs 
+
+vector<vector<int>> list;    // list of lists 
+vector<vector<int>> matrix;  // 2d matrix 
+
+void bfs (int root) {
+    queue<int> queue; 
+    vector<bool> visited; 
+
+    queue.push(root);
+    visited[root] = true;
+
+    while (!queue.empty()) {
+        int q = queue.front();
+
+        queue.pop();
+
+        // adj. list
+        for (int neighbour : list[q]) {
+            if (!visited[neighbour]) {
+                visited[neighbour] = true;
+                queue.push(neighbour);
+            }
+        }
+
+        // adj. matrix
+        for (int neighbour = 0; neighbour < len(matrix); neighbour++) {
+            if (matrix[q][neighbour] && !visited[neighbour]) {
+                visited[neighbour] = true;
+                queue.push(neighbour);
+            }
+        }
+    }
+}
