@@ -102,3 +102,39 @@ void bfs (int root) {
         }
     }
 }
+
+
+// mergesort 
+
+// sort pairs 
+void merge (int *array, int low, int mid, int high) {  
+    for (int i = 0; i < (mid - low + 1); i++) { left[i] = array[low + i]; }   
+    for (int i = 0; i < (high - mid); i++) { right[i] = array[mid + 1 + i]; }   
+
+    int i = 0;    // left
+    int j = 0;    // right 
+    int k = low;  // array
+
+    while (i < len(left) && j < len(right)) {
+        if (left[i] <= right[j]) {
+            array[k] = left[i];
+            i++;
+        } 
+        else {
+            array[k] = right[j];
+            j++;
+        }
+    }
+
+    while (i < len(left)) {
+        array[k] = left[i];
+        i++;
+        k++;
+    }
+
+    while (j < len(right)) {
+        array[k] = right[j];
+        j++;
+        k++;
+    }
+}
