@@ -16,3 +16,20 @@ void resize(int c) {
 
 if (size == cap) { resize(cap * 2); }         // grow 
 if (size == (cap / 4)) { resize(cap / 2); }   // shrink 
+
+
+// linkedlist 
+
+node *prev = nullptr;
+node *curr = head;
+
+for (int i = 0; i < index; i++) { 
+    prev = curr;
+    curr = curr->next;
+}
+
+(
+    prev->next = in;       // insert @ index
+    in->next = curr;
+)
+prev->next = curr->next;   // delete @ index
