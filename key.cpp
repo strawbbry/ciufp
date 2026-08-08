@@ -33,3 +33,14 @@ for (int i = 0; i < index; i++) {
     in->next = curr;
 )
 prev->next = curr->next;   // delete @ index
+
+
+// hashtable 
+
+entry* table;
+int i = hash(key, cap);
+
+while (table[i].occupy || table[i].tombstone) {
+    if (table[i].occupy && table[i].key == key) { return; }
+    else { i = (i + 1) % cap; }
+}
