@@ -129,10 +129,11 @@ def knapsack(total_weight, items): # 0/1
         for j in range(1, total_weight + 1):
             weight, value = items[i]
             
-            dp[i + 1][j] = max(dp[i + 1][j - 1], dp[i][j])
-            
-            if j - weight >= 0:
-                dp[i + 1][j] = max(dp[i + 1][j], dp[i][j - weight] + value)
+            if j - weight >= 0: # if item i will fit
+                #             (don't take i) (best of previous accounting for taking i's weight) 
+                dp[i + 1][j] = max(dp[i][j], dp[i][j - weight] + value)
+            else:
+                dp[i + 1][j] = dp[i][j]
                 
     return dp[total_items][total_weight]
 
