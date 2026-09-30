@@ -36,6 +36,8 @@ dict = defaultdict(list) # default []
 set = set([1], 2) # unordered UNIQUE data 
 set.add('3')
 set.remove(2)
+for s in set:
+    # iterate thru set 
 
 str = "hi u"
 indiv = str.split() # ["hi", "u"] 
