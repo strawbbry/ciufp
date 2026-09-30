@@ -9,7 +9,10 @@ range(3) = [0, 1, 2]
 
 # sorting : O(nlogn)
 # always try to sort first ! 
+
+# sorted accepts any iterable input (string, dict keys, etc.)
 sorted_lst = sorted(lst, key=None, reverse=False) # new array
+
 lst.sort(key=None, reverse=False)  # mutate array 
 
 # key = rule to sort by
