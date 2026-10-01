@@ -105,6 +105,9 @@ tally = Counter(count) # = {2 : 2, 3 : 1, 4 : 1} dictionary that counts occurren
 
 # trees & graphs 
 
+# grid / matrix
+[[False for _ in range(n)] in range(m)]
+
 def bfs(graph, root):
     queue = deque()
     visited = set()
