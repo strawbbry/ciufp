@@ -7,6 +7,30 @@ range(3) = [0, 1, 2]
 "name"[3:] = "e"
 "name"[3:-1] = ""
 
+# sliding window
+
+# when you want smallest window (minimum..)
+left = 0
+state = <starting value..>
+best = inf('float')
+for right in range(len(input)):
+    state += input[right]
+    while <state satisfies condition>:
+        best = min(best, right - left + 1)
+        state -= input[left]
+        left += 1
+
+# when you want largest window (maximum..)
+left = 0
+state = <starting value..>
+best = 0
+for right in range(len(input)):
+    state += input[right]
+    while <state does not satisfy condition>:
+        state -= input[left]
+        left += 1
+    best = max(best, right - left + 1)
+
 # sorting : O(nlogn)
 # always try to sort first ! 
 
