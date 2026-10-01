@@ -112,7 +112,7 @@ def bfs(graph, root):
     queue.append(root)
     visited.add(root)
     
-    for _ in range(len(queue)):
+    while queue:
         node = queue.popleft()
         for neighbour in graph[node]:
             if neighbour not in visited:
