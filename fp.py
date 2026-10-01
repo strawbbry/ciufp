@@ -112,7 +112,7 @@ def bfs(graph, root):
     queue.append(root)
     visited.add(root)
     
-    while queue:
+    for _ in range(len(queue)):
         node = queue.popleft()
         for neighbour in graph[node]:
             if neighbour not in visited:
@@ -132,8 +132,31 @@ def dfs(graph, root):
             if neighbour not in visited:
                 visited.add(neighbour)
                 stack.append(neighbour)
-                
-                
+
+def dfs(node, state): # ex: state = low, high bounds of child.val 
+    if node is None:
+        return <base case>
+
+    if <node breaks validity rule>:
+        return <failure val etc.>
+
+    left = dfs(node.left, <update state for left>)
+    right = dfs(node.right, <update state for right>)
+
+    return <combine left, right, node.val somehow>
+
+def backtracking(path, choices):
+    if <path complete>:
+        results.append(path[:]) # copy!
+        return 
+
+    for choice in choices:
+        if <choice allowed depending on current path>:
+            path.append(choice) # choose it 
+            backtracking(path, <choices left>)
+            path.pop() # unchoose it and try next
+        
+        
 # dynamic programming 
 
 prac1 = [
