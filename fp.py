@@ -98,6 +98,8 @@ heapq.heappush(q, 'ok')
 q = [-4]
 heapq.heappush(q, -2) # reverse heapq order (biggest first)
 
+heapq.heapify(q) # to sort 
+
 from collections import Counter
 count = [2, 3, 4, 2]
 tally = Counter(count) # = {2 : 2, 3 : 1, 4 : 1} dictionary that counts occurrences
